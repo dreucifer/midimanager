@@ -1,12 +1,10 @@
-/* Create a "class compliant " USB to 3 MIDI IN and 3 MIDI OUT interface.
+/* This creates 8 Serial midi pairs, hosts 8 USB MIDI devices as a host,
+   and creates 8 Virtual MIDI cables to the computer over USB.
 
-   MIDI receive (6N138 optocoupler) input circuit and series resistor
-   outputs need to be connected to Serial1, Serial2 and Serial3.
+   Some basic MIDI routing and filtering is implemented.
 
-   You must select MIDIx4 from the "Tools > USB Type" menu
-
-   This example code is in the public domain.
-*/
+   I have also implemented a high resolution uClock core.
+ */
 #include "midimanager.h"
 
 MidiFilterData midiFilterData;
@@ -81,7 +79,20 @@ void handleExternalClock()
 }
 
 // Send clock sync to the external midi ports and the USB interface
-void handleOnSync(uint32_t tick)
+void handleOnPPQN(uint32_t tick)
+{
+  for (int pair = 0; pair < 8; pair++)
+  {
+    byte outputFilter = midiFilterData.midiOutputFilters[pair];
+    if ((outputFilter >> 1) % 2)
+    {
+      midilist[pair]->sendRealTime(midi::Tick);
+    }
+  }
+}
+
+// Send clock sync to the external midi ports and the USB interface
+void handleOnSync24(uint32_t tick)
 {
   usbMIDI.sendRealTime(usbMIDI.Clock);
   for (int pair = 0; pair < 8; pair++)
@@ -90,6 +101,45 @@ void handleOnSync(uint32_t tick)
     if ((outputFilter >> 1) % 2)
     {
       midilist[pair]->sendRealTime(midi::Clock);
+    }
+  }
+}
+
+void handleStart()
+{
+  usbMIDI.sendRealTime(usbMIDI.Start);
+  for (int pair = 0; pair < 8; pair++)
+  {
+    byte outputFilter = midiFilterData.midiOutputFilters[pair];
+    if ((outputFilter >> 2) % 2)
+    {
+      midilist[pair]->sendRealTime(midi::Start);
+    }
+  }
+}
+
+void handleStop()
+{
+  usbMIDI.sendRealTime(usbMIDI.Stop);
+  for (int pair = 0; pair < 8; pair++)
+  {
+    byte outputFilter = midiFilterData.midiOutputFilters[pair];
+    if ((outputFilter >> 2) % 2)
+    {
+      midilist[pair]->sendRealTime(midi::Stop);
+    }
+  }
+}
+
+void handleContinue()
+{
+  usbMIDI.sendRealTime(usbMIDI.Continue);
+  for (int pair = 0; pair < 8; pair++)
+  {
+    byte outputFilter = midiFilterData.midiOutputFilters[pair];
+    if ((outputFilter >> 2) % 2)
+    {
+      midilist[pair]->sendRealTime(midi::Continue);
     }
   }
 }
@@ -109,6 +159,9 @@ void setup()
     case 0:
       MIDI0.setHandleMessage(doHandleMessageMIDI0);
       MIDI0.setHandleClock(handleExternalClock);
+      MIDI0.setHandleStart(handleStart);
+      MIDI0.setHandleStop(handleStop);
+      MIDI0.setHandleContinue(handleContinue);
       break;
     case 1:
       MIDI1.setHandleMessage(doHandleMessageMIDI1);
@@ -124,6 +177,9 @@ void setup()
       break;
     case 5:
       MIDI5.setHandleMessage(doHandleMessageMIDI5);
+      MIDI5.setHandleStart(handleStart);
+      MIDI5.setHandleStop(handleStop);
+      MIDI5.setHandleContinue(handleContinue);
       break;
     case 6:
       MIDI6.setHandleMessage(doHandleMessageMIDI6);
@@ -143,16 +199,20 @@ void setup()
 
   myusb.begin();
 
-  uClock.init();                         // Initialize the uClock system
+  uClock.init(); // Initialize the uClock system
+  uClock.setPPQN(uClock.PPQN_96);
   uClock.setTempo(120);                  // Set a default tempo
-  uClock.setOnPPQN(handleOnSync);    // Handle the sync pulse
+  uClock.setOnPPQN(handleOnPPQN);        // Handle the sync pulse
+  uClock.setOnSync24(handleOnSync24);    // Handle the sync pulse
   uClock.start();                        // Start the clock
   uClock.setMode(uClock.EXTERNAL_CLOCK); // Set the clock to external
 }
 
 void loop()
 {
-  // Next read messages arriving from the (up to) 10 USB devices plugged into the USB Host port
+  // Next read messages arriving from the 8 USB
+  // devices plugged into the USB Host port
+  // as well as the 8 Serial MIDI devices
   for (int pair = 0; pair < 8; pair++)
   {
     midilist[pair]->read();
@@ -200,9 +260,11 @@ void loop()
 
   if (usbMIDI.read())
   {
-    uint8_t cable = usbMIDI.getCable();
+    uint8_t cable = usbMIDI.getCable() % 8;
 
     midilist[cable]->send(
+        (midi::MidiType)usbMIDI.getType(), (midi::DataByte)usbMIDI.getData1(), (midi::DataByte)usbMIDI.getData2(), (midi::Channel)usbMIDI.getChannel());
+    t_usbmidilist[cable]->send(
         (midi::MidiType)usbMIDI.getType(), (midi::DataByte)usbMIDI.getData1(), (midi::DataByte)usbMIDI.getData2(), (midi::Channel)usbMIDI.getChannel());
   }
 }
@@ -219,18 +281,6 @@ bool runInputFilter(midi::MidiType type, midi::DataByte data1, midi::Channel cha
   case midi::NoteOn:
   case midi::PitchBend:
     return ((inputFilter >> NOTES) % 2) ? true : false;
-    break;
-  case midi::Clock:
-  case midi::TimeCodeQuarterFrame:
-  case midi::Tick:
-    return false;
-    break;
-  case midi::SongPosition:
-  case midi::SongSelect:
-  case midi::Start:
-  case midi::Continue:
-  case midi::Stop:
-    return ((inputFilter >> TRANSPORT) % 2) ? true : false;
     break;
   case midi::ControlChange:
     return ((inputFilter >> PCHANGE) % 2) || (((inputFilter >> NOTES) % 2) && (data1 == midi::ModulationWheel))
@@ -266,18 +316,6 @@ bool runOutputFilter(midi::MidiType type, midi::DataByte data1, midi::Channel ch
   case midi::NoteOn:
   case midi::PitchBend:
     return ((outputFilter >> NOTES) % 2) ? true : false;
-    break;
-  case midi::Clock:
-  case midi::TimeCodeQuarterFrame:
-  case midi::Tick:
-    return false;
-    break;
-  case midi::SongPosition:
-  case midi::SongSelect:
-  case midi::Start:
-  case midi::Continue:
-  case midi::Stop:
-    return ((outputFilter >> TRANSPORT) % 2) ? true : false;
     break;
   case midi::ControlChange:
     return ((outputFilter >> PCHANGE) % 2) || (((outputFilter >> NOTES) % 2) && (data1 == midi::ModulationWheel))

@@ -35,7 +35,7 @@ enum MidiFilters
 typedef struct
 {
   byte midiInputFilters[8] = {0b0010, 0b1101, 0b1100, 0b1100, 0b1100, 0b1101, 0b1100, 0b1100};
-  byte midiOutputFilters[8] = {0b0001, 0b0001, 0b0011, 0b0011, 0b0001, 0b1111, 0b0010, 0b1110};
+  byte midiOutputFilters[8] = {0b0101, 0b0001, 0b0111, 0b0111, 0b0001, 0b0011, 0b0110, 0b1110};
   byte midiOutputRoutes[8] = {0b11111110, 0b11111111, 0b11111111, 0b11111111, 0b11111111, 0b11011111, 0b11111111, 0b11111111};
   uint16_t midiOutputChannels[8] = {0b1111111000000000, 0b1111111111111111, 0b1111111111111111, 0b1111111111111111, 0b0000000000000100, 0b1111111111111111, 0b1111111111111111, 0b1111111111111111};
 
@@ -44,7 +44,8 @@ typedef struct
 
 bool runInputFilter(midi::MidiType type, midi::DataByte data1, midi::Channel channel, MidiPair pair);
 bool runOutputFilter(midi::MidiType type, midi::DataByte data1, midi::Channel channel, MidiPair pair);
-void handleOnSync(uint32_t tick);
+void handleOnPPQN(uint32_t tick);
+void handleOnSync24(uint32_t tick);
 
 
 #define CREATE_DO_HANDLE_MESSAGE_MIDI(Name, Index)                   \
