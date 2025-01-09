@@ -42,49 +42,34 @@ typedef struct
   uint32_t chkval = CHKVAL;
 } MidiFilterData;
 
+typedef struct
+{
+  bool filterNote = false;
+  bool filterAftertouch = false;
+  bool filterCC = false;
+  bool filterPC = false;
+  bool filterClock = false;
+  bool filterSong = false;
+  bool filterTransport = false;
+  bool filterSysEx = false;
+  uint16_t filterChannel = 0b0000000000000000;
+  byte mergeMap = 0b11111111;
+} MidiInputPort;
+
+typedef struct
+{
+  bool filterNote = false;
+  bool filterAftertouch = false;
+  bool filterCC = false;
+  bool filterPC = false;
+  bool filterClock = false;
+  bool filterSong = false;
+  bool filterTransport = false;
+  bool filterSysEx = false;
+  uint16_t filterChannel = 0b0000000000000000;
+} MidiOutputPort;
+
 bool runInputFilter(midi::MidiType type, midi::DataByte data1, midi::Channel channel, MidiPair pair);
 bool runOutputFilter(midi::MidiType type, midi::DataByte data1, midi::Channel channel, MidiPair pair);
 void handleOnPPQN(uint32_t tick);
 void handleOnSync24(uint32_t tick);
-
-
-#define CREATE_DO_HANDLE_MESSAGE_MIDI(Name, Index)                   \
-  void doHandleMessage##Name(const midi::Message<128> &message)      \
-  {                                                                  \
-    byte outputRoutes = midiFilterData.midiOutputRoutes[Index];      \
-    midi::MidiType type = message.type;                              \
-    midi::DataByte data1 = message.data1;                            \
-    midi::DataByte data2 = message.data2;                            \
-    midi::Channel channel = message.channel;                         \
-    usbMIDI.send(type, data1, data2, channel, Index);                \
-    if (runInputFilter(type, data1, channel, Index))                 \
-    {                                                                \
-      for (int pair = 0; pair < 8; pair++)                           \
-      {                                                              \
-        if ((outputRoutes >> pair) % 2)                              \
-        {                                                            \
-          if (runOutputFilter(type, data1, channel, (MidiPair)pair)) \
-          {                                                          \
-            midilist[pair]->send(type, data1, data2, channel);       \
-          }                                                          \
-        }                                                            \
-      }                                                              \
-    }                                                                \
-  };
-
-#define CREATE_DO_HANDLE_MESSAGE_USB(Name, Index)                      \
-  void doHandleMessage##Name##_TUSB(const midi::Message<128> &message) \
-  {                                                                    \
-    midi::MidiType type = message.type;                                \
-    midi::DataByte data1 = message.data1;                              \
-    midi::DataByte data2 = message.data2;                              \
-    midi::Channel channel = message.channel;                           \
-    usbMIDI.send(type, data1, data2, channel, (int)Index);             \
-    for (int pair = 0; pair < 8; pair++)                               \
-    {                                                                  \
-      if (runOutputFilter(type, data1, channel, (MidiPair)pair))       \
-      {                                                                \
-        midilist[pair]->send(type, data1, data2, channel);             \
-      }                                                                \
-    }                                                                  \
-  };

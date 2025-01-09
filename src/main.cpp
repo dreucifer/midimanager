@@ -55,28 +55,304 @@ MIDIDevice *t_usbmidilist[8] = {
     &t_uMIDI6,
     &t_uMIDI7};
 
-CREATE_DO_HANDLE_MESSAGE_MIDI(MIDI0, MIDI_0);
-CREATE_DO_HANDLE_MESSAGE_MIDI(MIDI1, MIDI_1);
-CREATE_DO_HANDLE_MESSAGE_MIDI(MIDI2, MIDI_2);
-CREATE_DO_HANDLE_MESSAGE_MIDI(MIDI3, MIDI_3);
-CREATE_DO_HANDLE_MESSAGE_MIDI(MIDI4, MIDI_4);
-CREATE_DO_HANDLE_MESSAGE_MIDI(MIDI5, MIDI_5);
-CREATE_DO_HANDLE_MESSAGE_MIDI(MIDI6, MIDI_6);
-CREATE_DO_HANDLE_MESSAGE_MIDI(MIDI7, MIDI_7);
+MidiInputPort MidiInputFilters[8];
+MidiOutputPort MidiOutputFilters[8];
 
-CREATE_DO_HANDLE_MESSAGE_USB(MIDI0, 0);
-CREATE_DO_HANDLE_MESSAGE_USB(MIDI1, 1);
-CREATE_DO_HANDLE_MESSAGE_USB(MIDI2, 2);
-CREATE_DO_HANDLE_MESSAGE_USB(MIDI3, 3);
-CREATE_DO_HANDLE_MESSAGE_USB(MIDI4, 4);
-CREATE_DO_HANDLE_MESSAGE_USB(MIDI5, 5);
-CREATE_DO_HANDLE_MESSAGE_USB(MIDI6, 6);
-CREATE_DO_HANDLE_MESSAGE_USB(MIDI7, 7);
+
+void doHandleMessageMIDI_0(const midi::Message<128> &message)
+{
+  MidiInputPort port = MidiInputFilters[0];
+  port.mergeMap = 0b11111110;
+  port.filterNote = true;
+  port.filterAftertouch = true;
+  port.filterTransport = true;
+  port.filterPC = true;
+  
+
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  if (runInputFilter(type, data1, channel, MIDI_0))
+  { for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_0)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } } }
+
+void doHandleMessageMIDI_1(const midi::Message<128> &message)
+{
+  MidiInputPort port = MidiInputFilters[1];
+  port.filterClock = true;
+
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  if (runInputFilter(type, data1, channel, MIDI_1))
+  { for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_1)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } } }
+
+void doHandleMessageMIDI_2(const midi::Message<128> &message)
+{
+  MidiInputPort port = MidiInputFilters[2];
+  port.filterNote = true;
+  port.filterClock = true;
+
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  if (runInputFilter(type, data1, channel, MIDI_2))
+  { for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_2)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } } }
+
+void doHandleMessageMIDI_3(const midi::Message<128> &message)
+{
+  MidiInputPort port = MidiInputFilters[3];
+  port.filterNote = true;
+  port.filterClock = true;
+
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  if (runInputFilter(type, data1, channel, MIDI_3))
+  { for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_3)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } } }
+
+void doHandleMessageMIDI_4(const midi::Message<128> &message)
+{
+  MidiInputPort port = MidiInputFilters[4];
+  port.filterNote = true;
+  port.filterClock = true;
+
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  if (runInputFilter(type, data1, channel, MIDI_4))
+  { for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_4)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } } }
+
+void doHandleMessageMIDI_5(const midi::Message<128> &message)
+{
+  MidiInputPort port = MidiInputFilters[5];
+  port.filterClock = true;
+
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  if (runInputFilter(type, data1, channel, MIDI_5))
+  { for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_5)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } } }
+
+void doHandleMessageMIDI_6(const midi::Message<128> &message)
+{
+  MidiInputPort port = MidiInputFilters[6];
+  port.filterNote = true;
+  port.filterClock = true;
+
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  if (runInputFilter(type, data1, channel, MIDI_6))
+  { for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_6)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } } }
+
+void doHandleMessageMIDI_7(const midi::Message<128> &message)
+{
+  MidiInputPort port = MidiInputFilters[7];
+  port.filterNote = true;
+  port.filterClock = true;
+
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_7)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } }
+
+void doHandleMessageUSBMIDI_0(const midi::Message<128> &message)
+{
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_0)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } }
+
+void doHandleMessageUSBMIDI_1(const midi::Message<128> &message)
+{
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_1)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } }
+
+void doHandleMessageUSBMIDI_2(const midi::Message<128> &message)
+{
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_2)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } }
+
+void doHandleMessageUSBMIDI_3(const midi::Message<128> &message)
+{
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_3)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } }
+
+void doHandleMessageUSBMIDI_4(const midi::Message<128> &message)
+{
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_4)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } }
+
+void doHandleMessageUSBMIDI_5(const midi::Message<128> &message)
+{
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_5)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } }
+
+void doHandleMessageUSBMIDI_6(const midi::Message<128> &message)
+{
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_6)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } }
+
+void doHandleMessageUSBMIDI_7(const midi::Message<128> &message)
+{
+  midi::MidiType type = message.type;
+  midi::DataByte data1 = message.data1;
+  midi::DataByte data2 = message.data2;
+  midi::Channel channel = message.channel;
+
+  if (runInputFilter(type, data1, channel, MIDI_7))
+  { for (int pair = 0; pair < 8; pair++)
+    { if ((MidiInputFilters[0].mergeMap >> pair) % 2)
+      { if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
+        { if (runOutputFilter(type, data1, channel, MIDI_7)) {
+            midilist[pair]->send(type, data1, data2, channel); }
+        } } } } }
+
+void handleNoteOn(midi::Channel channel, midi::DataByte data1, midi::DataByte data2)
+{
+  midi::Channel _channel = channel;
+  midi::DataByte _data1 = data1;
+  midi::DataByte _data2 = data2;
+  usbMIDI.sendNoteOn(_data1, _data2, _channel, 0);
+  for (int pair = 0; pair < 8; pair++)
+  {
+    midilist[pair]->sendNoteOn(_data1, _data2, _channel);
+  }
+};
+
+void handleNoteOff(midi::Channel channel, midi::DataByte data1, midi::DataByte data2)
+{
+  midi::Channel _channel = channel;
+  midi::DataByte _data1 = data1;
+  midi::DataByte _data2 = data2;
+  usbMIDI.sendNoteOff(_data1, _data2, _channel, 0);
+  for (int pair = 0; pair < 8; pair++)
+  {
+    midilist[pair]->sendNoteOff(_data1, _data2, _channel);
+  }
+};
 
 void handleExternalClock()
 {
   uClock.clockMe();
-}
+};
 
 // Send clock sync to the external midi ports and the USB interface
 void handleOnPPQN(uint32_t tick)
@@ -148,6 +424,17 @@ void setup()
 {
   Serial.begin(115200);
 
+  // Manually set the output filters. Replace with read_or_initialize from persistent storage.
+  MidiOutputFilters[0].filterClock = true;
+  MidiOutputFilters[0].filterPC = true;
+  MidiOutputFilters[1].filterClock = true;
+  MidiOutputFilters[1].filterTransport = true;
+  MidiOutputFilters[4].filterClock = true;
+  MidiOutputFilters[4].filterTransport = true;
+  MidiOutputFilters[5].filterTransport = true;
+  MidiOutputFilters[6].filterNote = true;
+  MidiOutputFilters[7].filterNote = true;
+
   // Run through each midi port, begin, turn off thru, and set the message callback.
   // Set the first midi port to the external clock master
   for (int port = 0; port < 8; port++)
@@ -157,35 +444,51 @@ void setup()
     switch (port)
     {
     case 0:
-      MIDI0.setHandleMessage(doHandleMessageMIDI0);
+      MIDI0.setHandleMessage(doHandleMessageMIDI_0);
       MIDI0.setHandleClock(handleExternalClock);
       MIDI0.setHandleStart(handleStart);
       MIDI0.setHandleStop(handleStop);
       MIDI0.setHandleContinue(handleContinue);
+      t_uMIDI0.setHandleNoteOn(handleNoteOn);
+      t_uMIDI0.setHandleNoteOff(handleNoteOff);
       break;
     case 1:
-      MIDI1.setHandleMessage(doHandleMessageMIDI1);
+      MIDI1.setHandleMessage(doHandleMessageMIDI_1);
+      t_uMIDI1.setHandleNoteOn(handleNoteOn);
+      t_uMIDI1.setHandleNoteOff(handleNoteOff);
       break;
     case 2:
-      MIDI2.setHandleMessage(doHandleMessageMIDI2);
+      MIDI2.setHandleMessage(doHandleMessageMIDI_2);
+      t_uMIDI2.setHandleNoteOn(handleNoteOn);
+      t_uMIDI2.setHandleNoteOff(handleNoteOff);
       break;
     case 3:
-      MIDI3.setHandleMessage(doHandleMessageMIDI3);
+      MIDI3.setHandleMessage(doHandleMessageMIDI_3);
+      t_uMIDI3.setHandleNoteOn(handleNoteOn);
+      t_uMIDI3.setHandleNoteOff(handleNoteOff);
       break;
     case 4:
-      MIDI4.setHandleMessage(doHandleMessageMIDI4);
+      MIDI4.setHandleMessage(doHandleMessageMIDI_4);
+      t_uMIDI4.setHandleNoteOn(handleNoteOn);
+      t_uMIDI4.setHandleNoteOff(handleNoteOff);
       break;
     case 5:
-      MIDI5.setHandleMessage(doHandleMessageMIDI5);
+      MIDI5.setHandleMessage(doHandleMessageMIDI_5);
       MIDI5.setHandleStart(handleStart);
       MIDI5.setHandleStop(handleStop);
       MIDI5.setHandleContinue(handleContinue);
+      t_uMIDI5.setHandleNoteOn(handleNoteOn);
+      t_uMIDI5.setHandleNoteOff(handleNoteOff);
       break;
     case 6:
-      MIDI6.setHandleMessage(doHandleMessageMIDI6);
+      MIDI6.setHandleMessage(doHandleMessageMIDI_6);
+      t_uMIDI6.setHandleNoteOn(handleNoteOn);
+      t_uMIDI6.setHandleNoteOff(handleNoteOff);
       break;
     case 7:
-      MIDI7.setHandleMessage(doHandleMessageMIDI7);
+      MIDI7.setHandleMessage(doHandleMessageMIDI_7);
+      t_uMIDI7.setHandleNoteOn(handleNoteOn);
+      t_uMIDI7.setHandleNoteOff(handleNoteOff);
       break;
     }
   }
@@ -229,28 +532,28 @@ void loop()
       switch (pair)
       {
       case 0:
-        doHandleMessageMIDI0_TUSB(newMessage);
+        doHandleMessageUSBMIDI_0(newMessage);
         break;
       case 1:
-        doHandleMessageMIDI1_TUSB(newMessage);
+        doHandleMessageUSBMIDI_1(newMessage);
         break;
       case 2:
-        doHandleMessageMIDI2_TUSB(newMessage);
+        doHandleMessageUSBMIDI_2(newMessage);
         break;
       case 3:
-        doHandleMessageMIDI3_TUSB(newMessage);
+        doHandleMessageUSBMIDI_3(newMessage);
         break;
       case 4:
-        doHandleMessageMIDI4_TUSB(newMessage);
+        doHandleMessageUSBMIDI_4(newMessage);
         break;
       case 5:
-        doHandleMessageMIDI5_TUSB(newMessage);
+        doHandleMessageUSBMIDI_5(newMessage);
         break;
       case 6:
-        doHandleMessageMIDI6_TUSB(newMessage);
+        doHandleMessageUSBMIDI_6(newMessage);
         break;
       case 7:
-        doHandleMessageMIDI7_TUSB(newMessage);
+        doHandleMessageUSBMIDI_7(newMessage);
         break;
       default:
         break;
@@ -271,64 +574,100 @@ void loop()
 
 bool runInputFilter(midi::MidiType type, midi::DataByte data1, midi::Channel channel, MidiPair pair)
 {
-  byte inputFilter = midiFilterData.midiInputFilters[pair];
-
-  switch (type)
+  if (((MidiInputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
   {
-  case midi::AfterTouchChannel:
-  case midi::AfterTouchPoly:
-  case midi::NoteOff:
-  case midi::NoteOn:
-  case midi::PitchBend:
-    return ((inputFilter >> NOTES) % 2) ? true : false;
-    break;
-  case midi::ControlChange:
-    return ((inputFilter >> PCHANGE) % 2) || (((inputFilter >> NOTES) % 2) && (data1 == midi::ModulationWheel))
-               ? true
-               : false;
-    break;
-  case midi::ProgramChange:
-    return ((inputFilter >> PCHANGE) % 2) ? true : false;
-    break;
-  default:
+    switch (type)
+    {
+    case midi::PitchBend:
+    case midi::NoteOff:
+    case midi::NoteOn:
+      return MidiInputFilters[0].filterNote;
+      break;
+    case midi::AfterTouchPoly:
+      return MidiInputFilters[0].filterAftertouch;
+      break;
+    case midi::ControlChange:
+      return MidiInputFilters[0].filterCC;
+      break;
+    case midi::ProgramChange:
+      return MidiInputFilters[0].filterPC;
+      break;
+    case midi::SystemExclusive:
+      return MidiInputFilters[0].filterSysEx;
+      break;
+    case midi::TimeCodeQuarterFrame:
+    case midi::SongPosition:
+    case midi::SongSelect:
+    case midi::Undefined_F4:
+    case midi::Undefined_F5:
+    case midi::TuneRequest:
+      return MidiInputFilters[0].filterSong;
+      break;
+    case midi::Clock:
+    case midi::Tick:
+      return MidiInputFilters[0].filterClock;
+    case midi::Start:
+    case midi::Continue:
+    case midi::Stop:
+      return MidiInputFilters[0].filterTransport;
+    case midi::Undefined_FD:
+    case midi::ActiveSensing:
+    case midi::SystemReset:
+    default:
+      return false;
+      break;
+    }
     return false;
-    break;
   }
-
   return false;
 }
 
 bool runOutputFilter(midi::MidiType type, midi::DataByte data1, midi::Channel channel, MidiPair pair)
 {
-  byte outputFilter = midiFilterData.midiOutputFilters[pair];
-  uint16_t outputChannels = midiFilterData.midiOutputChannels[pair];
-
-  if (((outputChannels >> (channel - 1)) % 2) == 0)
+  if (((MidiOutputFilters[pair].filterChannel >> (channel - 1)) % 2) == 0)
   {
+    switch (type)
+    {
+    case midi::PitchBend:
+    case midi::NoteOff:
+    case midi::NoteOn:
+      return MidiOutputFilters[pair].filterNote;
+      break;
+    case midi::AfterTouchPoly:
+      return MidiOutputFilters[pair].filterAftertouch;
+      break;
+    case midi::ControlChange:
+      return MidiOutputFilters[pair].filterCC;
+      break;
+    case midi::ProgramChange:
+      return MidiOutputFilters[pair].filterPC;
+      break;
+    case midi::SystemExclusive:
+      return MidiOutputFilters[pair].filterSysEx;
+      break;
+    case midi::TimeCodeQuarterFrame:
+    case midi::SongPosition:
+    case midi::SongSelect:
+    case midi::Undefined_F4:
+    case midi::Undefined_F5:
+    case midi::TuneRequest:
+      return MidiOutputFilters[pair].filterSong;
+      break;
+    case midi::Clock:
+    case midi::Tick:
+      return MidiOutputFilters[pair].filterClock;
+    case midi::Start:
+    case midi::Continue:
+    case midi::Stop:
+      return MidiOutputFilters[pair].filterTransport;
+    case midi::Undefined_FD:
+    case midi::ActiveSensing:
+    case midi::SystemReset:
+    default:
+      return false;
+      break;
+    }
     return false;
   }
-
-  switch (type)
-  {
-  case midi::AfterTouchChannel:
-  case midi::AfterTouchPoly:
-  case midi::NoteOff:
-  case midi::NoteOn:
-  case midi::PitchBend:
-    return ((outputFilter >> NOTES) % 2) ? true : false;
-    break;
-  case midi::ControlChange:
-    return ((outputFilter >> PCHANGE) % 2) || (((outputFilter >> NOTES) % 2) && (data1 == midi::ModulationWheel))
-               ? true
-               : false;
-    break;
-  case midi::ProgramChange:
-    return ((outputFilter >> PCHANGE) % 2) ? true : false;
-    break;
-  default:
-    return false;
-    break;
-  }
-
   return false;
 }
