@@ -296,6 +296,33 @@ void setup()
   Serial.begin(115200);
 
   // Manually set the input and output filters. Replace with read_or_initialize from persistent storage.
+  MidiInputFilters[0].filterAftertouch = true;
+  MidiInputFilters[1].filterAftertouch = false;
+  MidiInputFilters[2].filterAftertouch = true;
+  MidiInputFilters[3].filterAftertouch = true;
+  MidiInputFilters[4].filterAftertouch = true;
+  MidiInputFilters[5].filterAftertouch = true;
+  MidiInputFilters[6].filterAftertouch = true;
+  MidiInputFilters[7].filterAftertouch = true;
+
+  MidiInputFilters[0].filterCC = false;
+  MidiInputFilters[1].filterCC = false;
+  MidiInputFilters[2].filterCC = true;
+  MidiInputFilters[3].filterCC = true;
+  MidiInputFilters[4].filterCC = true;
+  MidiInputFilters[5].filterCC = true;
+  MidiInputFilters[6].filterCC = true;
+  MidiInputFilters[7].filterCC = true;
+
+  MidiInputFilters[0].filterChannel = 0b0000000000000000;
+  MidiInputFilters[1].filterChannel = 0b0000000000000000;
+  MidiInputFilters[2].filterChannel = 0b0000000000000000;
+  MidiInputFilters[3].filterChannel = 0b0000000000000000;
+  MidiInputFilters[4].filterChannel = 0b0000000000000000;
+  MidiInputFilters[5].filterChannel = 0b0000000000000000;
+  MidiInputFilters[6].filterChannel = 0b0000000000000000;
+  MidiInputFilters[7].filterChannel = 0b0000000000000000;
+
   MidiInputFilters[0].filterClock = false;
   MidiInputFilters[1].filterClock = true;
   MidiInputFilters[2].filterClock = true;
@@ -304,14 +331,141 @@ void setup()
   MidiInputFilters[5].filterClock = true;
   MidiInputFilters[6].filterClock = true;
   MidiInputFilters[7].filterClock = true;
-  MidiInputFilters[1].filterChannel = 0b0000000000000001;
 
-  MidiOutputFilters[0].filterPC = true;
+  MidiInputFilters[0].filterNote = true;
+  MidiInputFilters[1].filterNote = false;
+  MidiInputFilters[2].filterNote = true;
+  MidiInputFilters[3].filterNote = true;
+  MidiInputFilters[4].filterNote = true;
+  MidiInputFilters[5].filterNote = true;
+  MidiInputFilters[6].filterNote = true;
+  MidiInputFilters[7].filterNote = true;
+
+  MidiInputFilters[0].filterPC = false;
+  MidiInputFilters[1].filterPC = true;
+  MidiInputFilters[2].filterPC = true;
+  MidiInputFilters[3].filterPC = true;
+  MidiInputFilters[4].filterPC = true;
+  MidiInputFilters[5].filterPC = true;
+  MidiInputFilters[6].filterPC = true;
+  MidiInputFilters[7].filterPC = true;
+
+  MidiInputFilters[0].filterPorts = 0b00000000;
+  MidiInputFilters[1].filterPorts = 0b00000000;
+  MidiInputFilters[2].filterPorts = 0b00000100;
+  MidiInputFilters[3].filterPorts = 0b00001000;
+  MidiInputFilters[4].filterPorts = 0b00010000;
+  MidiInputFilters[5].filterPorts = 0b00100000;
+  MidiInputFilters[6].filterPorts = 0b01000000;
+  MidiInputFilters[7].filterPorts = 0b10000000;
+
+  MidiInputFilters[0].filterSong = true;
+  MidiInputFilters[1].filterSong = true;
+  MidiInputFilters[2].filterSong = true;
+  MidiInputFilters[3].filterSong = true;
+  MidiInputFilters[4].filterSong = true;
+  MidiInputFilters[5].filterSong = true;
+  MidiInputFilters[6].filterSong = true;
+  MidiInputFilters[7].filterSong = true;
+
+  MidiInputFilters[0].filterSysEx = true;
+  MidiInputFilters[1].filterSysEx = true;
+  MidiInputFilters[2].filterSysEx = true;
+  MidiInputFilters[3].filterSysEx = true;
+  MidiInputFilters[4].filterSysEx = true;
+  MidiInputFilters[5].filterSysEx = true;
+  MidiInputFilters[6].filterSysEx = true;
+  MidiInputFilters[7].filterSysEx = true;
+
+  MidiInputFilters[0].filterTransport = false;
+  MidiInputFilters[1].filterTransport = true;
+  MidiInputFilters[2].filterTransport = true;
+  MidiInputFilters[3].filterTransport = true;
+  MidiInputFilters[4].filterTransport = true;
+  MidiInputFilters[5].filterTransport = true;
+  MidiInputFilters[6].filterTransport = true;
+  MidiInputFilters[7].filterTransport = true;
+
+  MidiOutputFilters[0].filterAftertouch = true;
+  MidiOutputFilters[1].filterAftertouch = false;
+  MidiOutputFilters[2].filterAftertouch = true;
+  MidiOutputFilters[3].filterAftertouch = true;
+  MidiOutputFilters[4].filterAftertouch = true;
+  MidiOutputFilters[5].filterAftertouch = true;
+  MidiOutputFilters[6].filterAftertouch = true;
+  MidiOutputFilters[7].filterAftertouch = true;
+
+  MidiOutputFilters[0].filterCC = true;
+  MidiOutputFilters[1].filterCC = false;
+  MidiOutputFilters[2].filterCC = true;
+  MidiOutputFilters[3].filterCC = true;
+  MidiOutputFilters[4].filterCC = true;
+  MidiOutputFilters[5].filterCC = true;
+  MidiOutputFilters[6].filterCC = true;
+  MidiOutputFilters[7].filterCC = true;
+
+  MidiOutputFilters[0].filterChannel = 0b0000000111111111;
+  MidiOutputFilters[1].filterChannel = 0b0000000000000000;
+  MidiOutputFilters[2].filterChannel = 0b0000000000000000;
+  MidiOutputFilters[3].filterChannel = 0b0000000000000000;
+  MidiOutputFilters[4].filterChannel = 0b0000000000000000;
+  MidiOutputFilters[5].filterChannel = 0b0000000000000000;
+  MidiOutputFilters[6].filterChannel = 0b0000000000000000;
+  MidiOutputFilters[7].filterChannel = 0b0000000000000000;
+
+  MidiOutputFilters[0].filterClock = false;
+  MidiOutputFilters[1].filterClock = true;
+  MidiOutputFilters[2].filterClock = true;
+  MidiOutputFilters[3].filterClock = false;
+  MidiOutputFilters[4].filterClock = false;
+  MidiOutputFilters[5].filterClock = false;
+  MidiOutputFilters[6].filterClock = false;
+  MidiOutputFilters[7].filterClock = false;
+
+  MidiOutputFilters[0].filterNote = false;
+  MidiOutputFilters[1].filterNote = false;
+  MidiOutputFilters[2].filterNote = false;
+  MidiOutputFilters[3].filterNote = false;
+  MidiOutputFilters[4].filterNote = false;
+  MidiOutputFilters[5].filterNote = false;
+  MidiOutputFilters[6].filterNote = false;
+  MidiOutputFilters[7].filterNote = false;
+
+  MidiOutputFilters[0].filterPC = false;
+  MidiOutputFilters[1].filterPC = true;
+  MidiOutputFilters[2].filterPC = true;
+  MidiOutputFilters[3].filterPC = false;
+  MidiOutputFilters[4].filterPC = false;
+  MidiOutputFilters[5].filterPC = false;
+  MidiOutputFilters[6].filterPC = false;
+  MidiOutputFilters[7].filterPC = false;
+
+  MidiOutputFilters[0].filterSong = true;
+  MidiOutputFilters[1].filterSong = true;
+  MidiOutputFilters[2].filterSong = true;
+  MidiOutputFilters[3].filterSong = true;
+  MidiOutputFilters[4].filterSong = true;
+  MidiOutputFilters[5].filterSong = true;
+  MidiOutputFilters[6].filterSong = true;
+  MidiOutputFilters[7].filterSong = true;
+
+  MidiOutputFilters[0].filterSysEx = true;
+  MidiOutputFilters[1].filterSysEx = true;
+  MidiOutputFilters[2].filterSysEx = true;
+  MidiOutputFilters[3].filterSysEx = true;
+  MidiOutputFilters[4].filterSysEx = true;
+  MidiOutputFilters[5].filterSysEx = true;
+  MidiOutputFilters[6].filterSysEx = true;
+  MidiOutputFilters[7].filterSysEx = true;
+
+  MidiOutputFilters[0].filterTransport = true;
+  MidiOutputFilters[1].filterTransport = true;
   MidiOutputFilters[2].filterTransport = true;
-  MidiOutputFilters[4].filterTransport = true;
-  MidiOutputFilters[5].filterTransport = true;
-  MidiOutputFilters[6].filterNote = true;
-  MidiOutputFilters[7].filterNote = true;
+  MidiOutputFilters[3].filterTransport = false;
+  MidiOutputFilters[4].filterTransport = false;
+  MidiOutputFilters[5].filterTransport = false;
+  MidiOutputFilters[6].filterTransport = false;
+  MidiOutputFilters[7].filterTransport = false;
 
   // Run through each midi port, begin, turn off thru, and set the message callback.
   // Set the first midi port to the external clock master
@@ -580,6 +734,9 @@ void MidiDuplex::MessageCallback(const midi::Message<128> message) {
       return;
     }
     outputFilter = MidiOutputFilters[port];
+    if (port == 2) {
+      channel = 3;
+    }
     midilist[port]->send(type, data1, data2, channel);
   }
 }
