@@ -59,7 +59,9 @@ void handleOnSync24(uint32_t tick);
 class MidiDuplex {
   private:
     int pair;
-  
+    MidiInputFilter inputFilter;
+    MidiOutputFilter outputFilter;
+
   public:
     explicit MidiDuplex(int port);
     void MessageCallback(const midi::Message<128> message);
